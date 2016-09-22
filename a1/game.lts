@@ -1,0 +1,11 @@
+NOCARDS = (draw1 -> STACK_A|draw2 -> STACK_2|draw3 -> STACK_3),
+STACK_A = (drawA -> STACK_AA|draw2 -> STACK_A2|{draw3,drawWW} -> WIN|drawWL ->LOSE),
+STACK_2 = (drawA -> STACK_2A|draw2 -> STACK_22|draw3 -> STACK_23|drawWW -> WIN|drawWL -> LOSE),
+STACK_3 = ({drawA, draw3,drawWW} -> WIN| draw2 -> STACK_23|drawWL->LOSE),
+STACK_AA = (drawWW -> WIN|{drawA, draw2, draw3, drawWL}->LOSE),
+STACK_2A = ({draw2,draw3,drawWW}->WIN|{drawA,drawWL}->LOSE),
+STACK_A2 = ({draw3,drawWW} -> WIN|{drawA, draw2, drawWL}->LOSE),
+STACK_22 = ({draw2,drawWW} -> WIN|{drawA, draw3, drawWL}->LOSE),
+STACK_23 = ({drawA,drawWW} -> WIN|{draw2, draw3, drawWL}->LOSE),
+WIN = (restart-> NOCARDS),
+LOSE = (restart -> NOCARDS).

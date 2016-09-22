@@ -1,0 +1,12 @@
+const N = 3
+range P = 1..2
+range C = 0..N
+
+LOCK = LOCK[N],
+LOCK[c:C] = (when c > 0 acquire -> LOCK[c-1] | when (c < N) release -> LOCK[c+1]).
+
+THREAD = (acquire -> release -> THREAD ).
+
+||THREADS = ([P]:THREAD).
+
+||RECURSIVE_LOCK = (THREADS || LOCK) / {{[P].acquire} / acquire, {[P].release}/release}.

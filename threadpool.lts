@@ -1,0 +1,22 @@
+
+/*Let there be 3 requests*/
+range Requests = 1..3
+
+REQUEST = (getInvRes -> getAccRes -> REQUEST).
+||REQUESTS = (forall [i: Requests] request[i]:REQUEST).
+
+/*ThreadPool*/
+const WorkerCount = 2 /*Initiated 2 worker threads in pool*/
+range ThreadsLeft =0..WorkerCount
+
+POOL = POOL[0],
+POOL[p:ThreadsLeft]=
+	if (p>0) then (usethread -> POOL[p-1] | finishthread -> POOL[p+1])/*2 possible actions of worker threads*/
+	else (wait -> POOL[p])./*wait if no threads, loop back to if/else*/
+
+/*Webserver*/
+||WEB_SERVER = (REQUESTS || pool: POOL)/{
+	request[r: Requests].take_thread/pool.usethread,
+	request[r: Requests].finish_thread/pool.finishthread,
+	reqeust[r: Requests].no_threads/pool.wait
+}.

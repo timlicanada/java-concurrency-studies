@@ -1,0 +1,11 @@
+
+CPU = (bringProcess -> (over_time->return->CPU|done_ontime->death->CPU)).
+/*over_quantum returns process to dispatcher, returns to CPU ready state
+done_quantum gives process to grim reaper, returns to CPU ready state
+*/
+
+GRIMREAPER = (death -> GRIMREAPER).
+/*destroy_thread using process ID, return to GRIMREAPER ready state
+*/
+
+DISPATCHER = (bringProcess ->DISPATCHER | over_quantum -> DISPATCHER).

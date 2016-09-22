@@ -1,0 +1,45 @@
+/* If this LTSA only shows AQUEUE, switch top bar above to RR_SCHEDULER*/
+
+const PROCESSES = 2 // Total number of PROCESSES
+range T=0..PROCESSES
+
+GENERATOR = GENERATOR[2], //start state is 4 PROCESSES LEFT TO GENERATE
+GENERATOR[i:T] = 
+if(i>0) then
+	( generate->enqueue->GENERATOR[i-1]) // REDUCE THE AMOUNT GENERATOR CAN GENERATE
+else (enqueueOverflow ->GENERATOR[i]).
+
+const N=2 /*2 processes max enqueued*/
+range P = 0..N
+
+range M = 0..1
+set   S = {[M]} //changes for two spots 
+
+
+QUEUE            //empty state, only send permitted
+  = (enqueue[x:M]->QUEUE[x]),  
+QUEUE[h:M]       //one message queued to QUEUE   
+  = (enqueue[x:M]->QUEUE[x][h] 
+    |dequeue[h]->QUEUE
+    ),   
+QUEUE[t:S][h:M]  //two messages sent to QUEUE
+   = (enqueue[x:M]->QUEUE[x][t][h] // three states indicate overflow this leads to error detection
+     |dequeue[h]->QUEUE[t]
+     ).
+||AQUEUE = QUEUE/{enqueue/enqueue[M],dequeue/dequeue[M]}.
+
+
+DISPATCHER = (start-> dequeue ->DISPATCHER). // ASSUMPTION THAT start and dequeue occur at the same time
+
+const QUANTUM = 3 /*3 quantum units defined arbitrarily*/ // The max amount of time a process can run 
+
+CPU(N=QUANTUM) = (start->CPU[N]), //similar to COUNTDOWN code in chapter two 
+CPU[i:0..N] =
+(when(i>0) working->CPU[i-1]|done_task -> death ->CPU[QUANTUM] /*CPU will "work" until done or when quantum is finished*/
+|when(i==0) notdone_task->CPU[QUANTUM] /*if quantum finished, indicate over_time for GRIMREAPER*/
+).
+
+GRIMREAPER = (done_task-> death -> GRIMREAPER| notdone_task -> enqueue -> GRIMREAPER).
+/*destroy_thread using process ID, return to GRIMREAPER ready state*/
+
+||RR_SCHEDULER = (GENERATOR || AQUEUE || DISPATCHER || CPU || GRIMREAPER). // combination of all components together

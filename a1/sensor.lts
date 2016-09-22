@@ -1,0 +1,10 @@
+/* 
+3BB4 A1 Q1
+WATER LEVEL SENSOR
+TIM LI	1205961
+*/
+
+WATERLVL = NORMAL,
+NORMAL = (lessTWO -> LOW | greaterEIGHT -> HIGH),
+LOW = (equalTWO -> NORMAL),
+HIGH = (equalEIGHT -> NORMAL).

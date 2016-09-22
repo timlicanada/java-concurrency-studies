@@ -1,0 +1,4 @@
+WATERLVL = NORMAL,
+NORMAL = (lessFIVE -> LOW | greaterFIVE -> HIGH),
+LOW = (equalFIVE -> NORMAL),
+HIGH = (equalFIVE -> NORMAL).

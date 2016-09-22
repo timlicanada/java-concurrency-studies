@@ -1,0 +1,8 @@
+RESOURCE =  (run->pause->RESOURCE|run->interrupt->RESOURCE).
+ROTATOR = ( run->RUN | pause->ROTATOR| interrupt ->STOP) , 
+RUN = ( pause->ROTATOR | { run , rotate}->RUN| interrupt ->STOP ).
+
+MAIN = ({ a . rotate , a . run , a . pause , stop ,
+b . rotate , b . run , b . pause}->MAIN ).
+
+||THREADDEMO = ( a:ROTATOR|| b:ROTATOR ||{ a , b }::RESOURCE). 
